@@ -1,0 +1,14 @@
+accelerate==1.4.0
+diffusers==0.32.2
+einops==0.7.0
+pydantic>=2.6.1
+scipy>=1.12.0
+timm==0.9.16
+transformers==4.42.3
+kornia==0.8.0
+lpips==0.1.4
+opencv-python==4.9.0.80
+Pillow>=10.0.0
+
+# Install PyTorch with CUDA separately (see README):
+# pip install torch torchvision --index-url https://download.pytorch.org/whl/cu121
