@@ -2,9 +2,13 @@ import argparse
 import logging
 import os
 import sys
+import warnings
 
 import torch
 from PIL import Image
+
+# Suppress Flax deprecation warnings
+warnings.filterwarnings("ignore", message=".*Flax classes are deprecated.*")
 
 # Add src to path
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'src'))
@@ -42,14 +46,14 @@ def main():
     if args.model_path is None:
         args.model_path = os.path.join(os.path.dirname(__file__), "models", "relighting")
     
-    if not os.path.exists(args.model_path):
-        logger.error(f"Model not found at {args.model_path}")
-        return
-    
-    # Load model
+    # Load model (auto-downloads from HuggingFace if not local)
     logger.info(f"Loading relighting model from {args.model_path}...")
     device = get_device()
-    model = get_model(args.model_path, torch_dtype=torch.bfloat16, device=device)
+    try:
+        model = get_model(args.model_path, torch_dtype=torch.bfloat16, device=device)
+    except Exception as e:
+        logger.error(f"Failed to load model: {e}")
+        return
     
     # Load source image
     if not os.path.exists(args.source_image):
