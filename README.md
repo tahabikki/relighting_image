@@ -8,14 +8,40 @@ Standalone relighting inference using LBM (Light Bending Model).
 
 ```bash
 python -m venv .venv
-.venv\Scripts\activate  # On Windows
-source .venv/bin/activate  # On macOS/Linux
-
-pip install -r requirements.txt
-pip install torch torchvision --index-url https://download.pytorch.org/whl/cu121
 ```
 
-**Note:** Replace `cu121` with your CUDA version if needed (e.g., `cu122` for CUDA 12.2).
+**Activate virtual environment:**
+- **Windows:**
+  ```bash
+  .venv\Scripts\activate
+  ```
+- **macOS/Linux:**
+  ```bash
+  source .venv/bin/activate
+  ```
+
+**Install dependencies:**
+```bash
+pip install -r requirements.txt
+```
+
+**Install PyTorch:**
+
+- **Windows (with CUDA):**
+  ```bash
+  pip install torch torchvision --index-url https://download.pytorch.org/whl/cu121
+  ```
+  Replace `cu121` with your CUDA version if needed (e.g., `cu122` for CUDA 12.2).
+
+- **macOS (Metal Performance Shaders):**
+  ```bash
+  pip install torch torchvision
+  ```
+
+- **Linux (with CUDA):**
+  ```bash
+  pip install torch torchvision --index-url https://download.pytorch.org/whl/cu121
+  ```
 
 ### Usage
 

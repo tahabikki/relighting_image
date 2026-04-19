@@ -14,6 +14,20 @@ from lbm.inference import evaluate, get_model
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
+
+def get_device():
+    """Auto-detect the best available device for inference."""
+    if torch.cuda.is_available():
+        device = "cuda"
+        logger.info(f"Using CUDA device: {torch.cuda.get_device_name(0)}")
+    elif torch.backends.mps.is_available():
+        device = "mps"
+        logger.info("Using Apple Metal Performance Shaders (MPS)")
+    else:
+        device = "cpu"
+        logger.warning("Using CPU (inference will be slow)")
+    return device
+
 parser = argparse.ArgumentParser(description="Relighting inference using LBM model")
 parser.add_argument("--source_image", type=str, required=True, help="Path to source image")
 parser.add_argument("--output_path", type=str, required=True, help="Output directory path")
@@ -34,7 +48,8 @@ def main():
     
     # Load model
     logger.info(f"Loading relighting model from {args.model_path}...")
-    model = get_model(args.model_path, torch_dtype=torch.bfloat16, device="cuda")
+    device = get_device()
+    model = get_model(args.model_path, torch_dtype=torch.bfloat16, device=device)
     
     # Load source image
     if not os.path.exists(args.source_image):
