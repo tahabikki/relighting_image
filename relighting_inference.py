@@ -36,23 +36,32 @@ parser = argparse.ArgumentParser(description="Relighting inference using LBM mod
 parser.add_argument("--source_image", type=str, required=True, help="Path to source image")
 parser.add_argument("--output_path", type=str, required=True, help="Output directory path")
 parser.add_argument("--num_inference_steps", type=int, default=50, help="Number of inference steps (default: 50)")
-parser.add_argument("--model_path", type=str, default=None, help="Path to model weights (default: ./models/relighting)")
+parser.add_argument("--model_path", type=str, default=None, help="Path to local model or HuggingFace repo ID (e.g., 'user/repo-name')")
 
 
 def main():
     args = parser.parse_args()
     
-    # Set model path
+    # Determine model source
     if args.model_path is None:
         args.model_path = os.path.join(os.path.dirname(__file__), "models", "relighting")
     
-    # Load model (auto-downloads from HuggingFace if not local)
+    # Check if it's a local path or HuggingFace repo ID
+    is_local_path = os.path.exists(args.model_path) or os.path.sep in args.model_path
+    
+    if not is_local_path and "/" not in args.model_path:
+        logger.error(f"Model path '{args.model_path}' not found locally and is not a valid HuggingFace repo ID.")
+        logger.error("Please provide either a local path or a HuggingFace repo ID (e.g., 'username/repo-name')")
+        return
+    
+    # Load model
     logger.info(f"Loading relighting model from {args.model_path}...")
     device = get_device()
     try:
         model = get_model(args.model_path, torch_dtype=torch.bfloat16, device=device)
     except Exception as e:
         logger.error(f"Failed to load model: {e}")
+        logger.error("Ensure the model path is valid or provide a HuggingFace repo ID (e.g., 'user/repo-name')")
         return
     
     # Load source image
